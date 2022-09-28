@@ -1,5 +1,6 @@
 class YoutubeVideo extends HTMLElement {
     #id = '';
+    #justConfirmed = false;
 
     constructor () {
         super();
@@ -17,8 +18,16 @@ class YoutubeVideo extends HTMLElement {
         return this.getAttribute("src") ?? '';
     }
 
+    get alt() {
+        return this.getAttribute("alt") ?? '';
+    }
+
+    get picture() {
+        return this.getAttribute("picture") ?? '';
+    }
+
     get autoplay() {
-        return this.getAttribute("autoplay") ?? false;
+        return this.getAttribute("autoplay") === 'true';
     }
 
     get hasConsent() {
@@ -29,8 +38,37 @@ class YoutubeVideo extends HTMLElement {
         this.setCookie(value);
     }
 
+    get aspectRatio() {
+        return this.getAttribute('aspectRatio') ?? '16/9';
+    }
+
+    get textOrientation() {
+        return this.getAttribute('textOrientation') ?? 'row';
+    }
+
+    get textSize() {
+        const fontSize = parseFloat(this.getAttribute('textSize'));
+        return !Number.isNaN(fontSize) ? fontSize : 1.5;
+    }
+
+    get showIcon() {
+        const showIcon = this.getAttribute("showIcon");
+        if (showIcon === null) {
+            return true;
+        }
+        return showIcon === 'true';
+    }
+
+    get autoplayOnConfirm() {
+        const autoplayOnConfirm = this.getAttribute("autoplayOnConfirm");
+        if (autoplayOnConfirm === null) {
+            return true;
+        }
+        return autoplayOnConfirm === 'true';
+    }
+
     static get observedAttributes() {
-        return ['src', 'autoplay'];
+        return ['src', 'autoplay', 'alt', 'aspectRatio', 'autoplayOnConfirm', 'textOrientation', 'textSize', 'showIcon'];
     }
 
     connectedCallback() {
@@ -48,6 +86,10 @@ class YoutubeVideo extends HTMLElement {
             return;
         }
         this.hasConsent = true;
+
+        if (this.autoplayOnConfirm) {
+            this.#justConfirmed = true;
+        }
 
         this.render();
     }
@@ -73,18 +115,18 @@ class YoutubeVideo extends HTMLElement {
             return;
         }
         const props = {
-            allow: 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture',
+            allow: `accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture`,
             allowfullscreen: '',
             frameborder: '0',
             id: '',
             src: '',
             webkitallowfullscreen: '',
-            mozallowfullscreen: ''
+            mozallowfullscreen: '',
         };
 
         if ('' !== this.#id) {
             props.id = `player-${this.#id}`;
-            props.src = `https:\/\/www.youtube-nocookie.com/embed/${this.#id}?rel=0&amp;enablejsapi=1&amp;origin=${window.location.protocol}%2F%2F${window.location.host}${this.autoplay ? '&amp;autoplay=1&amp;mute=1' : ''}`;
+            props.src = `https:\/\/www.youtube-nocookie.com/embed/${this.#id}?rel=0&amp;enablejsapi=1&amp;origin=${window.location.protocol}%2F%2F${window.location.host}${this.autoplay || this.#justConfirmed ? '&amp;autoplay=1&amp;mute=1' : ''}`;
         }
 
         this.innerHTML += this.confirmedHtml;
@@ -100,16 +142,33 @@ class YoutubeVideo extends HTMLElement {
             <style>
                 youtube-video {
                     display: block;
-                    background: #666;
-                }
-                .nlx-video-container {
-                    display: block;
-                    height: 0;
-                    overflow: hidden;
-                    padding: 0;
                     position: relative;
+                    background: ${this.picture ? "url(" + this.picture + ")": '#666'};
+                    background-size: cover;
+                    cursor: pointer;
+                    height: 100%;
                     width: 100%;
-                    padding-bottom: 56.25%;
+                    aspect-ratio: ${this.aspectRatio};
+                }
+
+                .nlx-video-container {
+                    display: flex;
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    align-items: center;
+                    flex-direction: ${this.textOrientation};
+                }
+
+                youtube-video span {
+                    font-size: ${this.textSize}rem;
+                    margin-left: 0.3rem;
+                    color: #fff;
+                }
+
+                youtube-video svg {
+                    display: ${this.showIcon ? 'block' : 'none'};
                 }
             </style>
         `;
@@ -118,10 +177,10 @@ class YoutubeVideo extends HTMLElement {
     get notConfirmedHtml() {
         return `
             <div class="nlx-video-container" onClick="this.parentElement.confirmConsent()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="#fff" width="32" height="32">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="#fff" width="48" height="48">
                     <path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"></path>
                 </svg>
-                <span>Text</span>
+                <span>${this.alt}</span>
             </div>
         `;
     }
