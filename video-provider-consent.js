@@ -1,4 +1,4 @@
-class YoutubeVideo extends HTMLElement {
+class VideoProviderConsent extends HTMLElement {
     #id = '';
     #justConfirmed = false;
 
@@ -7,11 +7,31 @@ class YoutubeVideo extends HTMLElement {
     }
 
     get cookieName() {
-        return 'youtube-video-consent';
+        if (this.videoProvider === 'youtube') {
+            return 'youtube-video-consent';
+        }
+
+        if (this.videoProvider === 'vimeo') {
+            return 'vimeo-video-consent';
+        }
     }
 
     get regExpr() {
+        if (this.videoProvider === 'youtube') {
+            return this.youtubeRegExpr;
+        }
+
+        if (this.videoProvider === 'vimeo') {
+            return this.vimeoRegExpr;
+        }
+    }
+
+    get youtubeRegExpr() {
         return /^.*(youtu\.be\/|\/v\/|\/embed\/|\/watch\?v=|\&v=)([^#\&\?\/]*).*/;
+    }
+
+    get vimeoRegExpr() {
+        return /^.*(vimeo\.com\/)((video\/)|(channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/;
     }
 
     get src() {
@@ -71,6 +91,16 @@ class YoutubeVideo extends HTMLElement {
         return this.getAttribute("darkMode") === 'true';
     }
 
+    get videoProvider() {
+        if (this.youtubeRegExpr.test(this.src)) {
+            return 'youtube';
+        }
+
+        if (this.vimeoRegExpr.test(this.src)) {
+            return 'vimeo';
+        }
+    }
+
     static get observedAttributes() {
         return ['src', 'autoplay', 'text', 'aspectRatio', 'autoplayOnConfirm', 'textOrientation', 'textSize', 'showIcon', 'darkMode'];
     }
@@ -82,7 +112,21 @@ class YoutubeVideo extends HTMLElement {
 
     onSrcChanged() {
         const match = (this.src || '').match(this.regExpr);
-        this.#id = (match && match[2].length === 11) ? match[2] : '';
+
+        switch (this.videoProvider) {
+            case 'youtube':
+                this.#id = (match && match[2].length === 11) ? match[2] : '';
+                break;
+            case 'vimeo':
+                this.#id = (match && match[6].length) ? match[6] : '';
+                break;
+            default:
+                this.hidePlayer();
+        }
+    }
+
+    hidePlayer() {
+        this.style.display = 'none';
     }
 
     confirmConsent() {
@@ -112,7 +156,7 @@ class YoutubeVideo extends HTMLElement {
     }
 
     render() {
-        this.innerHTML = this.style;
+        this.innerHTML = this.stylesheet;
 
         if (false === this.hasConsent) {
             this.innerHTML += this.notConfirmedHtml;
@@ -130,7 +174,15 @@ class YoutubeVideo extends HTMLElement {
 
         if ('' !== this.#id) {
             props.id = `player-${this.#id}`;
-            props.src = `https:\/\/www.youtube-nocookie.com/embed/${this.#id}?rel=0&amp;enablejsapi=1&amp;origin=${window.location.protocol}%2F%2F${window.location.host}${this.autoplay || this.#justConfirmed ? '&amp;autoplay=1&amp;mute=1' : ''}`;
+
+            switch (this.videoProvider) {
+                case 'youtube':
+                    props.src = `https:\/\/www.youtube-nocookie.com/embed/${this.#id}?rel=0&amp;enablejsapi=1&amp;origin=${window.location.protocol}%2F%2F${window.location.host}${this.autoplay || this.#justConfirmed ? '&amp;autoplay=1' : ''}${this.autoplay ? '&amp;mute=1' : ''}`;
+                    break;
+                case 'vimeo':
+                    props.src = `https://player.vimeo.com/video/${this.#id}?${this.autoplay || this.#justConfirmed ? 'autoplay=1' : ''}${this.autoplay ? '&background=1' : ''}`;
+                    break;
+            }
         }
 
         this.innerHTML += this.confirmedHtml;
@@ -141,7 +193,7 @@ class YoutubeVideo extends HTMLElement {
         });
     }
 
-    get style() {
+    get stylesheet() {
         return `
             <style>
                 youtube-video {
@@ -200,5 +252,5 @@ class YoutubeVideo extends HTMLElement {
 }
 
 if ('customElements' in window) {
-    customElements.define('youtube-video', YoutubeVideo);
+    customElements.define('video-provider-consent', VideoProviderConsent);
 }
