@@ -196,7 +196,7 @@ class VideoProviderConsent extends HTMLElement {
     get stylesheet() {
         return `
             <style>
-                youtube-video {
+                video-provider-consent {
                     display: block;
                     position: relative;
                     background: ${this.picture ? "url(" + this.picture + ")": '#666'};
@@ -217,13 +217,13 @@ class VideoProviderConsent extends HTMLElement {
                     flex-direction: ${this.textOrientation};
                 }
 
-                youtube-video span {
+                video-provider-consent span {
                     font-size: ${this.textSize}rem;
                     margin-left: 0.3rem;
                     color: ${this.darkMode ? '#000': '#fff'};
                 }
 
-                youtube-video svg {
+                video-provider-consent svg {
                     display: ${this.showIcon ? 'block' : 'none'};
                     fill: ${this.darkMode ? '#000': '#fff'};
                 }
