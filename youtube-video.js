@@ -135,9 +135,9 @@ class YoutubeVideo extends HTMLElement {
 
         this.innerHTML += this.confirmedHtml;
 
-        const iframe = this.getElementsByTagName('iframe')[0];
-        Object.keys(props).forEach(attribute => {
-            iframe.setAttribute(attribute, props[attribute]);
+        const iframe = this.querySelector('iframe');
+        Object.entries(props).forEach(([attribute, value]) => {
+            iframe.setAttribute(attribute, value)
         });
     }
 
