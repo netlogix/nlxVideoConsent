@@ -1,0 +1,18 @@
+{
+  "name": "nlxvideoconsent",
+  "version": "1.0.0",
+  "description": "A javascript custom element to handle third party video provider consent",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/netlogix/nlxVideoConsent.git"
+  },
+  "author": "netlogix GmbH & Co. KG <websolutions@netlogix.de>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/netlogix/nlxVideoConsent/issues"
+  },
+  "homepage": "https://github.com/netlogix/nlxVideoConsent#readme"
+}
