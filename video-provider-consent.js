@@ -219,7 +219,8 @@ class VideoProviderConsent extends HTMLElement {
 
                 video-provider-consent span {
                     font-size: ${this.textSize}rem;
-                    margin-left: 0.3rem;
+                    height: ${this.textSize}rem;
+                    margin: 0.3rem;
                     color: ${this.darkMode ? '#000': '#fff'};
                 }
 
