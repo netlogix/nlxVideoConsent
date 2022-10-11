@@ -180,7 +180,7 @@ class VideoProviderConsent extends HTMLElement {
                     props.src = `https:\/\/www.youtube-nocookie.com/embed/${this.#id}?rel=0&amp;enablejsapi=1&amp;origin=${window.location.protocol}%2F%2F${window.location.host}${this.autoplay || this.#justConfirmed ? '&amp;autoplay=1' : ''}${this.autoplay ? '&amp;mute=1' : ''}`;
                     break;
                 case 'vimeo':
-                    props.src = `https://player.vimeo.com/video/${this.#id}?${this.autoplay || this.#justConfirmed ? 'autoplay=1' : ''}${this.autoplay ? '&background=1' : ''}`;
+                    props.src = `https:\/\/player.vimeo.com/video/${this.#id}?${this.autoplay || this.#justConfirmed ? 'autoplay=1' : ''}${this.autoplay ? '&background=1' : ''}`;
                     break;
             }
         }
