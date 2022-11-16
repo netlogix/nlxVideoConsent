@@ -20,6 +20,28 @@ The link to the video. Currently youtube and vimeo links are supported.
         src="https://www.youtube.com/watch?v=<YourId>"
     ></video-provider-consent>
 
+
+### picture
+The thumbnail picture to show if consent was not yet accepted.
+
+    <video-provider-consent
+        src="https://www.youtube.com/watch?v=<YourId>"
+        picture="<URL to picture>"
+    ></video-provider-consent>
+
+### thumbnailProxy
+A URL to a proxy Server to load thumbnails from. This is needed to show real thumbnails of the videos without giving third parties ip information of the customer.
+This URL can contain characters to substitute values needed for fetching the right thumbnail:
+- `<<provider>>` which is replaced by the video provider name (`youtube`, `vimeo`)
+- `<<videoId>>` which is the video id needed to fetch video information
+
+
+
+    <video-provider-consent
+        src="https://www.youtube.com/watch?v=<YourId>"
+        thumbnailProxy="<Your thumbnail proxy base url>?provider=<<provider>>&videoId=<<videoId>>"
+    ></video-provider-consent>
+
 ### autoplay
 Allows to enable or disable autoplay when loading the page.
 
@@ -71,6 +93,14 @@ Changes the text size. Values are given in `rem`. 1 `rem` is 16 Pixels.
     <video-provider-consent
         src="https://www.youtube.com/watch?v=<YourId>"
         textSize="2"
+    ></video-provider-consent>
+
+### iconSize
+Changes the icon size. Values are given in `rem`. 1 `rem` is 16 Pixels.
+
+    <video-provider-consent
+        src="https://www.youtube.com/watch?v=<YourId>"
+        iconSize="5"
     ></video-provider-consent>
 
 ### showIcon
