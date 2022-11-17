@@ -93,7 +93,7 @@ class VideoProviderConsent extends HTMLElement {
     }
 
 
-    static parseVideoProvider(videoUrl) {
+    static parseVideoProvider(videoUrl = '') {
         if (this.youtubeRegExpr.test(videoUrl)) {
             return 'youtube';
         }
