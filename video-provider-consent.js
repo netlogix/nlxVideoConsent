@@ -2,36 +2,15 @@ class VideoProviderConsent extends HTMLElement {
     #id = '';
     #justConfirmed = false;
 
+    static vimeoRegExpr = /^.*(vimeo\.com\/)((video\/)|(channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/;
+    static youtubeRegExpr = /^.*(youtu\.be\/|\/v\/|\/embed\/|\/watch\?v=|\&v=)([^#\&\?\/]*).*/;
+
     constructor () {
         super();
     }
 
     get cookieName() {
-        if (this.videoProvider === 'youtube') {
-            return 'youtube-video-consent';
-        }
-
-        if (this.videoProvider === 'vimeo') {
-            return 'vimeo-video-consent';
-        }
-    }
-
-    get regExpr() {
-        if (this.videoProvider === 'youtube') {
-            return this.youtubeRegExpr;
-        }
-
-        if (this.videoProvider === 'vimeo') {
-            return this.vimeoRegExpr;
-        }
-    }
-
-    get youtubeRegExpr() {
-        return /^.*(youtu\.be\/|\/v\/|\/embed\/|\/watch\?v=|\&v=)([^#\&\?\/]*).*/;
-    }
-
-    get vimeoRegExpr() {
-        return /^.*(vimeo\.com\/)((video\/)|(channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/;
+        return `${this.videoProvider}-video-consent`;
     }
 
     get src() {
@@ -102,13 +81,7 @@ class VideoProviderConsent extends HTMLElement {
     }
 
     get videoProvider() {
-        if (this.youtubeRegExpr.test(this.src)) {
-            return 'youtube';
-        }
-
-        if (this.vimeoRegExpr.test(this.src)) {
-            return 'vimeo';
-        }
+        return VideoProviderConsent.parseVideoProvider(this.src)
     }
 
     get thumbnailProxy() {
@@ -117,6 +90,39 @@ class VideoProviderConsent extends HTMLElement {
 
     static get observedAttributes() {
         return ['src', 'autoplay', 'text', 'aspectRatio', 'autoplayOnConfirm', 'textOrientation', 'textSize', 'showIcon', 'darkMode'];
+    }
+
+
+    static parseVideoProvider(videoUrl = '') {
+        if (this.youtubeRegExpr.test(videoUrl)) {
+            return 'youtube';
+        }
+
+        if (this.vimeoRegExpr.test(videoUrl)) {
+            return 'vimeo';
+        }
+    }
+
+    static parseVideoId(videoUrl = '') {
+        let regex = '';
+        const videoProvider = this.parseVideoProvider(videoUrl);
+        if (videoProvider === 'youtube') {
+            regex = this.youtubeRegExpr;
+        }
+
+        if (videoProvider === 'vimeo') {
+            regex = this.vimeoRegExpr;
+        }
+
+        const match = videoUrl.match(regex);
+        switch (videoProvider) {
+            case 'youtube':
+                return (match && match[2].length === 11) ? match[2] : '';
+            case 'vimeo':
+                return (match && match[6].length) ? match[6] : '';
+        }
+
+        return '';
     }
 
     generateThumbnailProxyUrl() {
@@ -131,17 +137,10 @@ class VideoProviderConsent extends HTMLElement {
     }
 
     onSrcChanged() {
-        const match = (this.src || '').match(this.regExpr);
+        this.#id = VideoProviderConsent.parseVideoId(this.src);
 
-        switch (this.videoProvider) {
-            case 'youtube':
-                this.#id = (match && match[2].length === 11) ? match[2] : '';
-                break;
-            case 'vimeo':
-                this.#id = (match && match[6].length) ? match[6] : '';
-                break;
-            default:
-                this.hidePlayer();
+        if (!this.#id) {
+            this.hidePlayer();
         }
     }
 
