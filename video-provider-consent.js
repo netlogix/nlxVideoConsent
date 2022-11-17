@@ -68,6 +68,18 @@ class VideoProviderConsent extends HTMLElement {
         return showIcon === 'true';
     }
 
+    get blur() {
+        const blur = this.getAttribute("blur");
+        if (blur === null) {
+            return true;
+        }
+        return blur === 'true';
+    }
+
+    get blurStrength() {
+        return this.getAttribute('blurStrength') ?? '1px';
+    }
+
     get autoplayOnConfirm() {
         const autoplayOnConfirm = this.getAttribute("autoplayOnConfirm");
         if (autoplayOnConfirm === null) {
@@ -221,8 +233,6 @@ class VideoProviderConsent extends HTMLElement {
                 video-provider-consent {
                     display: block;
                     position: relative;
-                    background: ${this.picture ? "url(" + this.picture + ")": '#666'};
-                    background-size: cover;
                     cursor: pointer;
                     height: 100%;
                     width: 100%;
@@ -237,6 +247,7 @@ class VideoProviderConsent extends HTMLElement {
                     transform: translate(-50%, -50%);
                     align-items: center;
                     flex-direction: ${this.textOrientation};
+                    z-index: 200;
                 }
 
                 .nlx-video-container,
@@ -250,6 +261,18 @@ class VideoProviderConsent extends HTMLElement {
                     height: ${this.textSize}rem;
                     margin: 0.3rem;
                     color: ${this.darkMode ? '#000': '#fff'};
+                }
+
+                .nlx-video-container:after {
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    background: ${this.picture ? "url(" + this.picture + ")": '#666'};
+                    background-size: cover;
+                    ${this.blur ? `filter: blur(${this.blurStrength});`: ''};
+                    z-index: 100;
                 }
 
                 video-provider-consent svg {

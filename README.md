@@ -140,3 +140,24 @@ Changes the text and icon color if set to `true`, to black. This is helpful when
         darkMode="true"
     ></video-provider-consent>
 ```
+
+### blur
+Blurs the thumbnail image of the video if set to `true`.
+
+```html
+    <video-provider-consent
+        src="https://www.youtube.com/watch?v=<YourId>"
+        blur="true"
+    ></video-provider-consent>
+```
+
+
+### blurStrength
+Changes strength of the `blur` effect. Values should be given in CSS units e.g. `px`, `rem`, `em` 
+
+```html
+    <video-provider-consent
+        src="https://www.youtube.com/watch?v=<YourId>"
+        blurStrength="2px"
+    ></video-provider-consent>
+```
