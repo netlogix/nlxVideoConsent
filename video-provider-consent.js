@@ -4,6 +4,7 @@ class VideoProviderConsent extends HTMLElement {
 
     static vimeoRegExpr = /^.*(vimeo\.com\/)((video\/)|(channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/;
     static youtubeRegExpr = /^.*(youtu\.be\/|\/v\/|\/embed\/|\/watch\?v=|\&v=)([^#\&\?\/]*).*/;
+    static configuration = {};
 
     constructor () {
         super();
@@ -11,6 +12,33 @@ class VideoProviderConsent extends HTMLElement {
 
     get cookieName() {
         return `${this.videoProvider}-video-consent`;
+    }
+
+    getAttribute(name) {
+        const value = super.getAttribute(name);
+        if (value !== null) {
+            return value;
+        }
+
+        if (typeof VideoProviderConsent.configuration[name] !== 'undefined') {
+            return VideoProviderConsent.configuration[name];
+        }
+
+        return null;
+    }
+
+    parseValueToBool(value, defaultValue) {
+        if (value === null) {
+            return defaultValue;
+        }
+
+        if (typeof VideoProviderConsent.configuration[name] === 'boolean') {
+            return value;
+        } else if (typeof VideoProviderConsent.configuration[name] === 'string') {
+            return !!JSON.parse(value.toLowerCase());
+        } else {
+            return !!JSON.parse(value);
+        }
     }
 
     get src() {
@@ -31,7 +59,7 @@ class VideoProviderConsent extends HTMLElement {
     }
 
     get autoplay() {
-        return this.getAttribute("autoplay") === 'true';
+        return this.parseValueToBool(this.getAttribute("autoplay"), false);
     }
 
     get hasConsent() {
@@ -61,19 +89,11 @@ class VideoProviderConsent extends HTMLElement {
     }
 
     get showIcon() {
-        const showIcon = this.getAttribute("showIcon");
-        if (showIcon === null) {
-            return true;
-        }
-        return showIcon === 'true';
+        return this.parseValueToBool(this.getAttribute("showIcon"), true);
     }
 
     get blur() {
-        const blur = this.getAttribute("blur");
-        if (blur === null) {
-            return true;
-        }
-        return blur === 'true';
+        return this.parseValueToBool(this.getAttribute("blur"), true);
     }
 
     get blurStrength() {
@@ -81,15 +101,11 @@ class VideoProviderConsent extends HTMLElement {
     }
 
     get autoplayOnConfirm() {
-        const autoplayOnConfirm = this.getAttribute("autoplayOnConfirm");
-        if (autoplayOnConfirm === null) {
-            return true;
-        }
-        return autoplayOnConfirm === 'true';
+        return this.parseValueToBool(this.getAttribute("autoplayOnConfirm"), true);
     }
 
     get darkMode() {
-        return this.getAttribute("darkMode") === 'true';
+        return this.parseValueToBool(this.getAttribute("darkMode"), false);
     }
 
     get videoProvider() {
