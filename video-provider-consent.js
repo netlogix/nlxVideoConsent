@@ -132,6 +132,14 @@ class VideoProviderConsent extends HTMLElement {
         return this.getAttribute("thumbnailProxy")
     }
 
+    get backdrop() {
+        return this.parseValueToBool(this.getAttribute("backdrop"), true);
+    }
+
+    get backdropColor() {
+        return this.getAttribute("backdropColor") ?? 'rgba(102, 102, 102, 0.6)';
+    }
+
     static get observedAttributes() {
         return ['src', 'autoplay', 'text', 'aspectRatio', 'autoplayOnConfirm', 'textOrientation', 'textSize', 'showIcon', 'darkMode'];
     }
@@ -305,6 +313,17 @@ class VideoProviderConsent extends HTMLElement {
                     background-size: cover;
                     ${this.blur ? `filter: blur(${this.blurStrength});`: ''};
                     z-index: 100;
+                }
+
+                .nlx-video-container:before {
+                    content: '';
+                    ${this.backdrop ? 'display: block;': 'display: none;'}
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    background: ${this.backdropColor};
+                    background-size: cover;
+                    z-index: 150;
                 }
 
                 video-provider-consent svg {
