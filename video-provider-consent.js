@@ -5,24 +5,24 @@ class VideoProviderConsent extends HTMLElement {
     static vimeoRegExpr = /^.*(vimeo\.com\/)((video\/)|(channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/;
     static youtubeRegExpr = /^.*(youtu\.be\/|\/v\/|\/embed\/|\/watch\?v=|\&v=)([^#\&\?\/]*).*/;
     static #configuration = {};
+    static #rerenderEventName = 'VideoProviderConsentRerender';
 
     constructor () {
         super();
 
-        document.addEventListener(VideoProviderConsent.rerenderEventName, () => {
+        document.addEventListener(VideoProviderConsent.#rerenderEventName, () => {
             this.connectedCallback();
         })
     }
 
-    static get rerenderEventName() {
-        return 'VideoProviderConsentRerender';
+    static set configuration(configuration) {
+        VideoProviderConsent.#configuration = configuration;
+        VideoProviderConsent.rerender();
     }
 
-    static set configuration(configuration) {
-        this.#configuration = configuration;
-
+    static rerender() {
         document.dispatchEvent(
-            new Event(VideoProviderConsent.rerenderEventName)
+            new Event(VideoProviderConsent.#rerenderEventName)
         );
     }
 
