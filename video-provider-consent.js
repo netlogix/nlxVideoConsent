@@ -4,10 +4,26 @@ class VideoProviderConsent extends HTMLElement {
 
     static vimeoRegExpr = /^.*(vimeo\.com\/)((video\/)|(channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/;
     static youtubeRegExpr = /^.*(youtu\.be\/|\/v\/|\/embed\/|\/watch\?v=|\&v=)([^#\&\?\/]*).*/;
-    static configuration = {};
+    static #configuration = {};
 
     constructor () {
         super();
+
+        document.addEventListener(VideoProviderConsent.rerenderEventName, () => {
+            this.connectedCallback();
+        })
+    }
+
+    static get rerenderEventName() {
+        return 'VideoProviderConsentRerender';
+    }
+
+    static set configuration(configuration) {
+        this.#configuration = configuration;
+
+        document.dispatchEvent(
+            new Event(VideoProviderConsent.rerenderEventName)
+        );
     }
 
     get cookieName() {
@@ -20,8 +36,8 @@ class VideoProviderConsent extends HTMLElement {
             return value;
         }
 
-        if (typeof VideoProviderConsent.configuration[name] !== 'undefined') {
-            return VideoProviderConsent.configuration[name];
+        if (typeof VideoProviderConsent.#configuration[name] !== 'undefined') {
+            return VideoProviderConsent.#configuration[name];
         }
 
         return null;
@@ -32,9 +48,9 @@ class VideoProviderConsent extends HTMLElement {
             return defaultValue;
         }
 
-        if (typeof VideoProviderConsent.configuration[name] === 'boolean') {
+        if (typeof value === 'boolean') {
             return value;
-        } else if (typeof VideoProviderConsent.configuration[name] === 'string') {
+        } else if (typeof value === 'string') {
             return !!JSON.parse(value.toLowerCase());
         } else {
             return !!JSON.parse(value);
