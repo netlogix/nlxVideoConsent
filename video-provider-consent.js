@@ -69,6 +69,10 @@ class VideoProviderConsent extends HTMLElement {
         return this.getAttribute("text") ?? '';
     }
 
+    get textAlign() {
+        return this.getAttribute("textAlign") ?? 'left';
+    }
+
     get picture() {
         let picture = this.getAttribute("picture") ?? '';
         if (!picture && this.thumbnailProxy) {
@@ -301,6 +305,7 @@ class VideoProviderConsent extends HTMLElement {
                 }
 
                 video-provider-consent span {
+                    text-align: ${this.textAlign};
                     font-size: ${this.textSize}rem;
                     height: ${this.textSize}rem;
                     margin: 0.3rem;
