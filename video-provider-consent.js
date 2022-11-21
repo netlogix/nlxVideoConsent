@@ -4,10 +4,30 @@ class VideoProviderConsent extends HTMLElement {
 
     static vimeoRegExpr = /^.*(vimeo\.com\/)((video\/)|(channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/;
     static youtubeRegExpr = /^.*(youtu\.be\/|\/v\/|\/embed\/|\/watch\?v=|\&v=)([^#\&\?\/]*).*/;
-    static configuration = {};
+    static #configuration = {};
+    static #rerenderEventName = 'VideoProviderConsentRerender';
 
     constructor () {
         super();
+
+        if (window.videoProviderConsentConfiguration) {
+            VideoProviderConsent.#configuration = window.videoProviderConsentConfiguration;
+        }
+
+        document.addEventListener(VideoProviderConsent.#rerenderEventName, () => {
+            this.connectedCallback();
+        })
+    }
+
+    static set configuration(configuration) {
+        VideoProviderConsent.#configuration = configuration;
+        VideoProviderConsent.rerender();
+    }
+
+    static rerender() {
+        document.dispatchEvent(
+            new Event(VideoProviderConsent.#rerenderEventName)
+        );
     }
 
     get cookieName() {
@@ -20,8 +40,8 @@ class VideoProviderConsent extends HTMLElement {
             return value;
         }
 
-        if (typeof VideoProviderConsent.configuration[name] !== 'undefined') {
-            return VideoProviderConsent.configuration[name];
+        if (typeof VideoProviderConsent.#configuration[name] !== 'undefined') {
+            return VideoProviderConsent.#configuration[name];
         }
 
         return null;
@@ -32,9 +52,9 @@ class VideoProviderConsent extends HTMLElement {
             return defaultValue;
         }
 
-        if (typeof VideoProviderConsent.configuration[name] === 'boolean') {
+        if (typeof value === 'boolean') {
             return value;
-        } else if (typeof VideoProviderConsent.configuration[name] === 'string') {
+        } else if (typeof value === 'string') {
             return !!JSON.parse(value.toLowerCase());
         } else {
             return !!JSON.parse(value);
@@ -47,6 +67,10 @@ class VideoProviderConsent extends HTMLElement {
 
     get text() {
         return this.getAttribute("text") ?? '';
+    }
+
+    get textAlign() {
+        return this.getAttribute("textAlign") ?? 'left';
     }
 
     get picture() {
@@ -114,6 +138,14 @@ class VideoProviderConsent extends HTMLElement {
 
     get thumbnailProxy() {
         return this.getAttribute("thumbnailProxy")
+    }
+
+    get backdrop() {
+        return this.parseValueToBool(this.getAttribute("backdrop"), true);
+    }
+
+    get backdropColor() {
+        return this.getAttribute("backdropColor") ?? 'rgba(102, 102, 102, 0.6)';
     }
 
     static get observedAttributes() {
@@ -273,10 +305,11 @@ class VideoProviderConsent extends HTMLElement {
                 }
 
                 video-provider-consent span {
+                    text-align: ${this.textAlign};
                     font-size: ${this.textSize}rem;
                     height: ${this.textSize}rem;
                     margin: 0.3rem;
-                    color: ${this.darkMode ? '#000': '#fff'};
+                    color: ${this.darkMode ? '#000' : '#fff'};
                 }
 
                 .nlx-video-container:after {
@@ -285,17 +318,28 @@ class VideoProviderConsent extends HTMLElement {
                     position: absolute;
                     width: 100%;
                     height: 100%;
-                    background: ${this.picture ? "url(" + this.picture + ")": '#666'};
+                    background: ${this.picture ? "url(" + this.picture + ")" : '#666'};
                     background-size: cover;
-                    ${this.blur ? `filter: blur(${this.blurStrength});`: ''};
+                    ${this.blur ? `filter: blur(${this.blurStrength});` : ''};
                     z-index: 100;
+                }
+                
+                .nlx-video-container:before {
+                    content: '';
+                    ${this.backdrop ? 'display: block;': 'display: none;'}
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    background: ${this.backdropColor};
+                    background-size: cover;
+                    z-index: 150;
                 }
 
                 video-provider-consent svg {
                     width: ${this.iconSize}rem;
                     height: ${this.iconSize}rem;
                     display: ${this.showIcon ? 'block' : 'none'};
-                    fill: ${this.darkMode ? '#000': '#fff'};
+                    fill: ${this.darkMode ? '#000' : '#fff'};
                 }
             </style>
         `;

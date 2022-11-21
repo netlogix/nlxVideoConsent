@@ -14,7 +14,7 @@ Example:
 The element uses the maximum width and height allowed by its parent element respecting aspect-ratio.
 
 ## Global configuration
-You can change the configuration for all elements on the Page by settings the configuration on the `VideoProviderConsent` element class in javascript.
+You can change the configuration for all elements on the Page by either setting the configuration on the `VideoProviderConsent` element class in javascript or by setting the `videoProviderConsentConfiguration` variable on the window object.
 The keys of the configuration object are the names of the attributes. If both, configuration and attribute, with the same name are set, the attribute gets priority.
 **Caution!:** The values need to be strings in order to preserve value similarity between configuration and attribute values.
 
@@ -23,7 +23,16 @@ VideoProviderConsent.configuration = {
     blur: 'true',
     iconSize: '2rem',
 };
+
+// OR
+
+window.videoProviderConsentConfiguration = {
+    blur: 'true',
+    iconSize: '2rem',
+};
 ```
+
+The window method will have better load time, because you don't need to wait for the element javascript to load.
 
 ## Attributes
 
@@ -120,6 +129,36 @@ Changes the text size. Values are given in `rem`. 1 `rem` is 16 Pixels.
 <video-provider-consent
     src="https://www.youtube.com/watch?v=<YourId>"
     textSize="2"
+></video-provider-consent>
+```
+
+### textAlign
+Changes the text align. Values possible are `left`, `center` and `right`. Default is `left`.
+
+```html
+<video-provider-consent
+    src="https://www.youtube.com/watch?v=<YourId>"
+    textAlign="center"
+></video-provider-consent>
+```
+
+### backdrop
+Enables or disables the thumbnail backdrop. Values possible are `true` and `false`. Default is `true`.
+
+```html
+<video-provider-consent
+    src="https://www.youtube.com/watch?v=<YourId>"
+    backdrop="false"
+></video-provider-consent>
+```
+
+### backdropColor
+Changes the color of the thumbnail backdrop. Values possible are all available CSS colors (Hex, rgb, rgba etc.). Default is `rgba(102, 102, 102, 0.6)`.
+
+```html
+<video-provider-consent
+    src="https://www.youtube.com/watch?v=<YourId>"
+    backdropColor="rgba(102, 102, 102, 0.2)"
 ></video-provider-consent>
 ```
 
