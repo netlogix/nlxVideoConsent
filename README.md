@@ -14,7 +14,7 @@ Example:
 The element uses the maximum width and height allowed by its parent element respecting aspect-ratio.
 
 ## Global configuration
-You can change the configuration for all elements on the Page by either settings the configuration on the `VideoProviderConsent` element class in javascript or by setting the `videoProviderConsentConfiguration` variable on the window object.
+You can change the configuration for all elements on the Page by either setting the configuration on the `VideoProviderConsent` element class in javascript or by setting the `videoProviderConsentConfiguration` variable on the window object.
 The keys of the configuration object are the names of the attributes. If both, configuration and attribute, with the same name are set, the attribute gets priority.
 **Caution!:** The values need to be strings in order to preserve value similarity between configuration and attribute values.
 
