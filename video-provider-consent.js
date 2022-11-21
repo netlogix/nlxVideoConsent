@@ -304,6 +304,10 @@ class VideoProviderConsent extends HTMLElement {
                     width: 100%;
                 }
 
+                .nlx-video-container {
+                    position: relative;
+                }
+
                 video-provider-consent span {
                     text-align: ${this.textAlign};
                     font-size: ${this.textSize}rem;
@@ -313,26 +317,31 @@ class VideoProviderConsent extends HTMLElement {
                 }
 
                 .nlx-video-container:after {
-                    content: '';
-                    display: block;
-                    position: absolute;
-                    width: 100%;
-                    height: 100%;
                     background: ${this.picture ? "url(" + this.picture + ")" : '#666'};
-                    background-size: cover;
                     ${this.blur ? `filter: blur(${this.blurStrength});` : ''};
                     z-index: 100;
                 }
-                
+
                 .nlx-video-container:before {
-                    content: '';
-                    ${this.backdrop ? 'display: block;': 'display: none;'}
-                    position: absolute;
-                    width: 100%;
-                    height: 100%;
+                    ${this.backdrop ? '': 'display: none;'}
                     background: ${this.backdropColor};
-                    background-size: cover;
                     z-index: 150;
+                }
+
+                .nlx-video-container:before,
+                .nlx-video-container:after {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    top: 0;
+                    bottom: 0;
+                    background-size: cover;
+                }
+
+                .nlx-video-container.nlx-video-consent-accepted:before,
+                .nlx-video-container.nlx-video-consent-accepted:after {
+                    display: none;
                 }
 
                 video-provider-consent svg {
@@ -360,7 +369,7 @@ class VideoProviderConsent extends HTMLElement {
 
     get confirmedHtml() {
         return `
-            <div class="nlx-video-container" onClick="this.parentElement.confirmConsent()">
+            <div class="nlx-video-container nlx-video-consent-accepted" onClick="this.parentElement.confirmConsent()">
                 <iframe />
             </div>
         `;
