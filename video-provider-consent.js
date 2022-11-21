@@ -10,6 +10,10 @@ class VideoProviderConsent extends HTMLElement {
     constructor () {
         super();
 
+        if (window.videoProviderConsentConfiguration) {
+            VideoProviderConsent.#configuration = window.videoProviderConsentConfiguration;
+        }
+
         document.addEventListener(VideoProviderConsent.#rerenderEventName, () => {
             this.connectedCallback();
         })
@@ -300,7 +304,7 @@ class VideoProviderConsent extends HTMLElement {
                     font-size: ${this.textSize}rem;
                     height: ${this.textSize}rem;
                     margin: 0.3rem;
-                    color: ${this.darkMode ? '#000': '#fff'};
+                    color: ${this.darkMode ? '#000' : '#fff'};
                 }
 
                 .nlx-video-container:after {
@@ -309,12 +313,12 @@ class VideoProviderConsent extends HTMLElement {
                     position: absolute;
                     width: 100%;
                     height: 100%;
-                    background: ${this.picture ? "url(" + this.picture + ")": '#666'};
+                    background: ${this.picture ? "url(" + this.picture + ")" : '#666'};
                     background-size: cover;
-                    ${this.blur ? `filter: blur(${this.blurStrength});`: ''};
+                    ${this.blur ? `filter: blur(${this.blurStrength});` : ''};
                     z-index: 100;
                 }
-
+                
                 .nlx-video-container:before {
                     content: '';
                     ${this.backdrop ? 'display: block;': 'display: none;'}
@@ -330,7 +334,7 @@ class VideoProviderConsent extends HTMLElement {
                     width: ${this.iconSize}rem;
                     height: ${this.iconSize}rem;
                     display: ${this.showIcon ? 'block' : 'none'};
-                    fill: ${this.darkMode ? '#000': '#fff'};
+                    fill: ${this.darkMode ? '#000' : '#fff'};
                 }
             </style>
         `;
