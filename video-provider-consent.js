@@ -1,6 +1,7 @@
 class VideoProviderConsent extends HTMLElement {
     #id = '';
     #justConfirmed = false;
+    #elementId = '';
 
     static vimeoRegExpr = /^.*(vimeo\.com\/)((video\/)|(channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/;
     static youtubeRegExpr = /^.*(youtu\.be\/|\/v\/|\/embed\/|\/watch\?v=|\&v=)([^#\&\?\/]*).*/;
@@ -10,6 +11,7 @@ class VideoProviderConsent extends HTMLElement {
     constructor () {
         super();
 
+        this.id = this.#elementId = this.generateUniqueID();
         if (window.videoProviderConsentConfiguration) {
             VideoProviderConsent.#configuration = window.videoProviderConsentConfiguration;
         }
@@ -185,6 +187,13 @@ class VideoProviderConsent extends HTMLElement {
         return '';
     }
 
+    generateUniqueID() {
+        return String(
+            Date.now().toString(32) +
+            Math.random().toString(16)
+        ).replace(/\./g, '');
+    }
+
     generateThumbnailProxyUrl() {
         return this.thumbnailProxy
             .replace('<<videoId>>', this.#id)
@@ -237,6 +246,10 @@ class VideoProviderConsent extends HTMLElement {
         return (parts.length === 2) ? parts.pop().split(';').shift() : false;
     }
 
+    get cssElementSelector() {
+        return `video-provider-consent[id='${this.#elementId}']` + ' ';
+    }
+
     render() {
         this.innerHTML = this.stylesheet;
 
@@ -278,7 +291,7 @@ class VideoProviderConsent extends HTMLElement {
     get stylesheet() {
         return `
             <style>
-                video-provider-consent {
+                ${this.cssElementSelector} {
                     display: block;
                     position: relative;
                     cursor: pointer;
@@ -287,7 +300,7 @@ class VideoProviderConsent extends HTMLElement {
                     aspect-ratio: ${this.aspectRatio};
                 }
 
-                .nlx-video-controls {
+                ${this.cssElementSelector} .nlx-video-controls {
                     display: flex;
                     position: absolute;
                     left: 50%;
@@ -298,17 +311,17 @@ class VideoProviderConsent extends HTMLElement {
                     z-index: 200;
                 }
 
-                .nlx-video-container,
-                .nlx-video-container iframe {
+                ${this.cssElementSelector} .nlx-video-container,
+                ${this.cssElementSelector} .nlx-video-container iframe {
                     height: 100%;
                     width: 100%;
                 }
 
-                .nlx-video-container {
+                ${this.cssElementSelector} .nlx-video-container {
                     position: relative;
                 }
 
-                video-provider-consent span {
+                ${this.cssElementSelector} span {
                     text-align: ${this.textAlign};
                     font-size: ${this.textSize}rem;
                     height: ${this.textSize}rem;
@@ -316,20 +329,20 @@ class VideoProviderConsent extends HTMLElement {
                     color: ${this.darkMode ? '#000' : '#fff'};
                 }
 
-                .nlx-video-container:after {
+                ${this.cssElementSelector} .nlx-video-container:after {
                     background: ${this.picture ? "url(" + this.picture + ")" : '#666'};
                     ${this.blur ? `filter: blur(${this.blurStrength});` : ''};
                     z-index: 100;
                 }
 
-                .nlx-video-container:before {
+                ${this.cssElementSelector} .nlx-video-container:before {
                     ${this.backdrop ? '': 'display: none;'}
                     background: ${this.backdropColor};
                     z-index: 150;
                 }
 
-                .nlx-video-container:before,
-                .nlx-video-container:after {
+                ${this.cssElementSelector} .nlx-video-container:before,
+                ${this.cssElementSelector} .nlx-video-container:after {
                     content: '';
                     position: absolute;
                     left: 0;
@@ -339,12 +352,12 @@ class VideoProviderConsent extends HTMLElement {
                     background-size: cover;
                 }
 
-                .nlx-video-container.nlx-video-consent-accepted:before,
-                .nlx-video-container.nlx-video-consent-accepted:after {
+                ${this.cssElementSelector} .nlx-video-container.nlx-video-consent-accepted:before,
+                ${this.cssElementSelector} .nlx-video-container.nlx-video-consent-accepted:after {
                     display: none;
                 }
 
-                video-provider-consent svg {
+                ${this.cssElementSelector} svg {
                     width: ${this.iconSize}rem;
                     height: ${this.iconSize}rem;
                     display: ${this.showIcon ? 'block' : 'none'};
