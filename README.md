@@ -55,7 +55,7 @@ The thumbnail picture to show if consent was not yet accepted.
 ></video-provider-consent>
 ```
 
-### thumbnailProxy
+### thumbnail-proxy
 A URL to a proxy Server to load thumbnails from. This is needed to show real thumbnails of the videos without giving third parties ip information of the customer.
 This URL can contain characters to substitute values needed for fetching the right thumbnail:
 - `<<provider>>` which is replaced by the video provider name (`youtube`, `vimeo`)
@@ -64,7 +64,7 @@ This URL can contain characters to substitute values needed for fetching the rig
 ```html
 <video-provider-consent
     src="https://www.youtube.com/watch?v=<YourId>"
-    thumbnailProxy="\<Your thumbnail proxy base url\>\?provider=\<\<provider\>\>\&videoId=\<\<videoId\>\>"
+    thumbnail-proxy="\<Your thumbnail proxy base url\>\?provider=\<\<provider\>\>\&videoId=\<\<videoId\>\>"
 ></video-provider-consent>
 ```
 
@@ -88,27 +88,27 @@ Placeholder text for information when video is not currently loaded.
 ></video-provider-consent>
 ```
 
-### aspectRatio
+### aspect-ratio
 The aspect-ratio used for the video and preview.
 
 ```html
 <video-provider-consent
     src="https://www.youtube.com/watch?v=<YourId>"
-    aspectRatio="16/10"
+    aspect-ratio="16/10"
 ></video-provider-consent>
 ```
 
-### autoplayOnConfirm
+### autoplay-on-confirm
 Enables or disables autoplay when first confirming the consent. This is enabled by default to save clicks.
 
 ```html
 <video-provider-consent
     src="https://www.youtube.com/watch?v=<YourId>"
-    autoplayOnConfirm="false"
+    autoplay-on-confirm="false"
 ></video-provider-consent>
 ```
 
-### textOrientation
+### text-orientation
 Changes the orientation of the text to the icon. This is `row` by default and can be any of the following values:
 - row
 - row-reverse
@@ -118,27 +118,27 @@ Changes the orientation of the text to the icon. This is `row` by default and ca
 ```html
 <video-provider-consent
     src="https://www.youtube.com/watch?v=<YourId>"
-    textOrientation="row-reverse"
+    text-orientation="row-reverse"
 ></video-provider-consent>
 ```
 
-### textSize
+### text-size
 Changes the text size. Values are given in `rem`. 1 `rem` is 16 Pixels.
 
 ```html
 <video-provider-consent
     src="https://www.youtube.com/watch?v=<YourId>"
-    textSize="2"
+    text-size="2"
 ></video-provider-consent>
 ```
 
-### textAlign
+### text-align
 Changes the text align. Values possible are `left`, `center` and `right`. Default is `left`.
 
 ```html
 <video-provider-consent
     src="https://www.youtube.com/watch?v=<YourId>"
-    textAlign="center"
+    text-align="center"
 ></video-provider-consent>
 ```
 
@@ -152,43 +152,43 @@ Enables or disables the thumbnail backdrop. Values possible are `true` and `fals
 ></video-provider-consent>
 ```
 
-### backdropColor
+### backdrop-color
 Changes the color of the thumbnail backdrop. Values possible are all available CSS colors (Hex, rgb, rgba etc.). Default is `rgba(102, 102, 102, 0.6)`.
 
 ```html
 <video-provider-consent
     src="https://www.youtube.com/watch?v=<YourId>"
-    backdropColor="rgba(102, 102, 102, 0.2)"
+    backdrop-color="rgba(102, 102, 102, 0.2)"
 ></video-provider-consent>
 ```
 
-### iconSize
+### icon-size
 Changes the icon size. Values are given in `rem`. 1 `rem` is 16 Pixels.
 
 ```html
 <video-provider-consent
     src="https://www.youtube.com/watch?v=<YourId>"
-    iconSize="5"
+    icon-size="5"
 ></video-provider-consent>
 ```
 
-### showIcon
+### show-icon
 Shows or hides the video player icon. This can be used if you only want the text to show. This is `true` on default.
 
 ```html
 <video-provider-consent
     src="https://www.youtube.com/watch?v=<YourId>"
-    showIcon="false"
+    show-icon="false"
 ></video-provider-consent>
 ```
 
-### darkMode
+### dark-mode
 Changes the text and icon color if set to `true`, to black. This is helpful when using light color backgrounds.
 
 ```html
 <video-provider-consent
     src="https://www.youtube.com/watch?v=<YourId>"
-    darkMode="true"
+    dark-mode="true"
 ></video-provider-consent>
 ```
 
@@ -203,12 +203,12 @@ Blurs the thumbnail image of the video if set to `true`.
 ```
 
 
-### blurStrength
+### blur-strength
 Changes strength of the `blur` effect. Values should be given in CSS units e.g. `px`, `rem`, `em` 
 
 ```html
 <video-provider-consent
     src="https://www.youtube.com/watch?v=<YourId>"
-    blurStrength="2px"
+    blur-strength="2px"
 ></video-provider-consent>
 ```

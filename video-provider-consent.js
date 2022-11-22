@@ -70,7 +70,7 @@ class VideoProviderConsent extends HTMLElement {
     }
 
     get textAlign() {
-        return this.getAttribute("textAlign") ?? 'left';
+        return this.getAttribute("text-align") ?? 'left';
     }
 
     get picture() {
@@ -95,25 +95,25 @@ class VideoProviderConsent extends HTMLElement {
     }
 
     get aspectRatio() {
-        return this.getAttribute('aspectRatio') ?? '16/9';
+        return this.getAttribute('aspect-ratio') ?? '16/9';
     }
 
     get textOrientation() {
-        return this.getAttribute('textOrientation') ?? 'row';
+        return this.getAttribute('text-orientation') ?? 'row';
     }
 
     get textSize() {
-        const fontSize = parseFloat(this.getAttribute('textSize'));
+        const fontSize = parseFloat(this.getAttribute('text-size'));
         return !Number.isNaN(fontSize) ? fontSize : 1.5;
     }
 
     get iconSize() {
-        const iconSize = parseFloat(this.getAttribute('iconSize'));
+        const iconSize = parseFloat(this.getAttribute('icon-size'));
         return !Number.isNaN(iconSize) ? iconSize : 3;
     }
 
     get showIcon() {
-        return this.parseValueToBool(this.getAttribute("showIcon"), true);
+        return this.parseValueToBool(this.getAttribute("show-icon"), true);
     }
 
     get blur() {
@@ -121,15 +121,15 @@ class VideoProviderConsent extends HTMLElement {
     }
 
     get blurStrength() {
-        return this.getAttribute('blurStrength') ?? '1px';
+        return this.getAttribute('blur-strength') ?? '1px';
     }
 
     get autoplayOnConfirm() {
-        return this.parseValueToBool(this.getAttribute("autoplayOnConfirm"), true);
+        return this.parseValueToBool(this.getAttribute("autoplay-on-confirm"), true);
     }
 
     get darkMode() {
-        return this.parseValueToBool(this.getAttribute("darkMode"), false);
+        return this.parseValueToBool(this.getAttribute("dark-mode"), false);
     }
 
     get videoProvider() {
@@ -137,7 +137,7 @@ class VideoProviderConsent extends HTMLElement {
     }
 
     get thumbnailProxy() {
-        return this.getAttribute("thumbnailProxy")
+        return this.getAttribute("thumbnail-proxy")
     }
 
     get backdrop() {
@@ -145,11 +145,11 @@ class VideoProviderConsent extends HTMLElement {
     }
 
     get backdropColor() {
-        return this.getAttribute("backdropColor") ?? 'rgba(102, 102, 102, 0.6)';
+        return this.getAttribute("backdrop-color") ?? 'rgba(102, 102, 102, 0.6)';
     }
 
     static get observedAttributes() {
-        return ['src', 'autoplay', 'text', 'aspectRatio', 'autoplayOnConfirm', 'textOrientation', 'textSize', 'showIcon', 'darkMode'];
+        return ['src', 'autoplay', 'text', 'aspect-ratio', 'autoplay-on-confirm', 'text-orientation', 'text-size', 'show-icon', 'dark-mode'];
     }
 
 
