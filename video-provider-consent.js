@@ -32,8 +32,13 @@ class VideoProviderConsent extends HTMLElement {
         );
     }
 
-    get cookieName() {
-        return `${this.videoProvider}-video-consent`;
+    static revokeConsent() {
+        this.#removeCookie(VideoProviderConsent.#getCookieName('youtube'));
+        this.#removeCookie(VideoProviderConsent.#getCookieName('vimeo'));
+    }
+
+    static #getCookieName(videoProvider) {
+        return `${videoProvider}-video-consent`;
     }
 
     getAttribute(name) {
@@ -237,12 +242,19 @@ class VideoProviderConsent extends HTMLElement {
         const date = new Date();
         date.setTime(date.getTime() + (14 * 24 * 60 * 60 * 1000));
         let expires = 'expires=' + date.toUTCString();
-        document.cookie = this.cookieName + '=' + value + ';' + expires + ';path=/';
+        document.cookie = VideoProviderConsent.#getCookieName(this.videoProvider) + '=' + value + ';' + expires + ';path=/';
+    }
+
+    static #removeCookie(cookieName) {
+        const date = new Date();
+        date.setTime(0);
+        let expires = 'expires=' + date.toUTCString();
+        document.cookie = cookieName + '=false;' + expires + ';path=/';
     }
 
     getCookie() {
         const value = `; ${document.cookie}`;
-        const parts = value.split('; ' + this.cookieName + '=');
+        const parts = value.split('; ' + VideoProviderConsent.#getCookieName(this.videoProvider) + '=');
         return (parts.length === 2) ? parts.pop().split(';').shift() : false;
     }
 
