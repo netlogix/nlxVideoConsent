@@ -223,12 +223,12 @@ class VideoProviderConsent extends HTMLElement {
     }
 
     confirmConsent(event) {
-        event.preventDefault();
         event.stopPropagation();
-
         if (event.target.tagName.toLowerCase() === 'a') {
             return;
         }
+
+        event.preventDefault();
         this.hasConsent = true;
 
         if (this.autoplayOnConfirm) {
