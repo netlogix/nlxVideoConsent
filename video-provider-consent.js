@@ -337,7 +337,7 @@ class VideoProviderConsent extends HTMLElement {
                 ${this.cssElementSelector} span {
                     text-align: ${this.textAlign};
                     font-size: ${this.textSize}rem;
-                    margin: 0.3rem;
+                    margin-top: 0.3rem;
                     color: ${this.darkMode ? '#000' : '#fff'};
                     overflow-x: hidden;
                     overflow-wrap: anywhere;
