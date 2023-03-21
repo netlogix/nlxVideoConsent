@@ -321,6 +321,7 @@ class VideoProviderConsent extends HTMLElement {
                     align-items: center;
                     flex-direction: ${this.textOrientation};
                     z-index: 200;
+                    width: 100%;
                 }
 
                 ${this.cssElementSelector} .nlx-video-container,
@@ -336,9 +337,11 @@ class VideoProviderConsent extends HTMLElement {
                 ${this.cssElementSelector} span {
                     text-align: ${this.textAlign};
                     font-size: ${this.textSize}rem;
-                    height: ${this.textSize}rem;
-                    margin: 0.3rem;
+                    margin-top: 0.3rem;
                     color: ${this.darkMode ? '#000' : '#fff'};
+                    overflow-x: hidden;
+                    overflow-wrap: anywhere;
+                    white-space: normal;
                 }
 
                 ${this.cssElementSelector} .nlx-video-container:after {
