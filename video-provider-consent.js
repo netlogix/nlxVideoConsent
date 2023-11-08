@@ -7,6 +7,10 @@ class VideoProviderConsent extends HTMLElement {
     static youtubeRegExpr = /^.*(youtu\.be\/|\/v\/|\/embed\/|\/watch\?v=|\&v=)([^#\&\?\/]*).*/;
     static #configuration = {};
     static #rerenderEventName = 'VideoProviderConsentRerender';
+    static #userCentricsConsentInformation = {
+        'YouTube Video': false,
+        'Vimeo': false
+    }
 
     constructor () {
         super();
@@ -15,6 +19,14 @@ class VideoProviderConsent extends HTMLElement {
         if (window.videoProviderConsentConfiguration) {
             VideoProviderConsent.#configuration = window.videoProviderConsentConfiguration;
         }
+
+        window.addEventListener('ucEvent', (event) => {
+            for (let key in VideoProviderConsent.#userCentricsConsentInformation) {
+                VideoProviderConsent.#userCentricsConsentInformation[key] = event.detail[key];
+            }
+
+            VideoProviderConsent.rerender();
+        });
 
         document.addEventListener(VideoProviderConsent.#rerenderEventName, () => {
             this.connectedCallback();
@@ -30,15 +42,6 @@ class VideoProviderConsent extends HTMLElement {
         document.dispatchEvent(
             new Event(VideoProviderConsent.#rerenderEventName)
         );
-    }
-
-    static revokeConsent() {
-        this.#removeCookie(VideoProviderConsent.#getCookieName('youtube'));
-        this.#removeCookie(VideoProviderConsent.#getCookieName('vimeo'));
-    }
-
-    static #getCookieName(videoProvider) {
-        return `${videoProvider}-video-consent`;
     }
 
     getAttribute(name) {
@@ -94,11 +97,7 @@ class VideoProviderConsent extends HTMLElement {
     }
 
     get hasConsent() {
-        return this.getCookie();
-    }
-
-    set hasConsent(value) {
-        this.setCookie(value);
+        return VideoProviderConsent.#userCentricsConsentInformation[this.videoProvider];
     }
 
     get aspectRatio() {
@@ -162,30 +161,30 @@ class VideoProviderConsent extends HTMLElement {
 
     static parseVideoProvider(videoUrl = '') {
         if (this.youtubeRegExpr.test(videoUrl)) {
-            return 'youtube';
+            return 'YouTube Video';
         }
 
         if (this.vimeoRegExpr.test(videoUrl)) {
-            return 'vimeo';
+            return 'Vimeo';
         }
     }
 
     static parseVideoId(videoUrl = '') {
         let regex = '';
         const videoProvider = this.parseVideoProvider(videoUrl);
-        if (videoProvider === 'youtube') {
+        if (videoProvider === 'YouTube Video') {
             regex = this.youtubeRegExpr;
         }
 
-        if (videoProvider === 'vimeo') {
+        if (videoProvider === 'Vimeo') {
             regex = this.vimeoRegExpr;
         }
 
         const match = videoUrl.match(regex);
         switch (videoProvider) {
-            case 'youtube':
+            case 'YouTube Video':
                 return (match && match[2].length === 11) ? match[2] : '';
-            case 'vimeo':
+            case 'Vimeo':
                 return (match && match[6].length) ? match[6] : '';
         }
 
@@ -202,7 +201,7 @@ class VideoProviderConsent extends HTMLElement {
     generateThumbnailProxyUrl() {
         return this.thumbnailProxy
             .replace('<<videoId>>', this.#id)
-            .replace('<<provider>>', this.videoProvider);
+            .replace('<<provider>>', this.videoProvider.replace('YouTube Video', 'youtube').toLowerCase());
     }
 
     connectedCallback() {
@@ -222,6 +221,10 @@ class VideoProviderConsent extends HTMLElement {
         this.style.display = 'none';
     }
 
+    get userCentricsServiceInformation() {
+        return UC_UI.getServicesBaseInfo().filter(service => service.name.includes(VideoProviderConsent.parseVideoProvider(this.src))).shift();
+    }
+
     confirmConsent(event) {
         event.stopPropagation();
         if (event.target.tagName.toLowerCase() === 'a') {
@@ -229,33 +232,15 @@ class VideoProviderConsent extends HTMLElement {
         }
 
         event.preventDefault();
-        this.hasConsent = true;
 
-        if (this.autoplayOnConfirm) {
-            this.#justConfirmed = true;
-        }
+        UC_UI.acceptService(this.userCentricsServiceInformation?.id).then(() => {
+            if (this.autoplayOnConfirm) {
+                this.#justConfirmed = true;
+            }
 
-        this.render();
-    }
-
-    setCookie(value) {
-        const date = new Date();
-        date.setTime(date.getTime() + (14 * 24 * 60 * 60 * 1000));
-        let expires = 'expires=' + date.toUTCString();
-        document.cookie = VideoProviderConsent.#getCookieName(this.videoProvider) + '=' + value + ';' + expires + ';path=/';
-    }
-
-    static #removeCookie(cookieName) {
-        const date = new Date();
-        date.setTime(0);
-        let expires = 'expires=' + date.toUTCString();
-        document.cookie = cookieName + '=false;' + expires + ';path=/';
-    }
-
-    getCookie() {
-        const value = `; ${document.cookie}`;
-        const parts = value.split('; ' + VideoProviderConsent.#getCookieName(this.videoProvider) + '=');
-        return (parts.length === 2) ? parts.pop().split(';').shift() : false;
+            VideoProviderConsent.#userCentricsConsentInformation[this.videoProvider] = true;
+            VideoProviderConsent.rerender();
+        });
     }
 
     get cssElementSelector() {
@@ -283,10 +268,10 @@ class VideoProviderConsent extends HTMLElement {
             props.id = `player-${this.#id}`;
 
             switch (this.videoProvider) {
-                case 'youtube':
+                case 'YouTube Video':
                     props.src = `https:\/\/www.youtube-nocookie.com/embed/${this.#id}?rel=0&amp;enablejsapi=1&amp;origin=${window.location.protocol}%2F%2F${window.location.host}${this.autoplay || this.#justConfirmed ? '&amp;autoplay=1' : ''}${this.autoplay ? '&amp;mute=1' : ''}`;
                     break;
-                case 'vimeo':
+                case 'Vimeo':
                     props.src = `https:\/\/player.vimeo.com/video/${this.#id}?${this.autoplay || this.#justConfirmed ? 'autoplay=1' : ''}${this.autoplay ? '&background=1' : ''}`;
                     break;
             }

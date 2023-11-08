@@ -1,5 +1,9 @@
 # nlxVideoConsent
 
+**Important:**
+
+This javascript needs the usercentrics service, since v3.0.0, to be included and running for it to work correctly. If you dont want to use usercentrics you can use the Tag v2.2.0.
+
 Example:
 
 ```html
