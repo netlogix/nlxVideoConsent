@@ -28,7 +28,7 @@ class VideoProviderConsent extends HTMLElement {
             VideoProviderConsent.rerender();
         });
 
-        if (typeof __ucCmp !== 'undefined') {
+        if (typeof __ucCmp !== 'undefined' && typeof __ucCmp.getServicesBaseInfo !== 'undefined') {
             __ucCmp.getServicesBaseInfo().then(serviceInformation => {
                 for (let key in VideoProviderConsent.#userCentricsConsentInformation) {
                     for (let index in serviceInformation) {
