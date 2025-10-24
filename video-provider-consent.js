@@ -28,6 +28,21 @@ class VideoProviderConsent extends HTMLElement {
             VideoProviderConsent.rerender();
         });
 
+        if (typeof __ucCmp !== 'undefined') {
+            __ucCmp.getServicesBaseInfo().then(serviceInformation => {
+                for (let key in VideoProviderConsent.#userCentricsConsentInformation) {
+                    for (let index in serviceInformation) {
+                        if (key === serviceInformation[index]['name']) {
+                            VideoProviderConsent.#userCentricsConsentInformation[key] = serviceInformation[index].consent.status;
+                        }
+                    }
+                }
+
+                VideoProviderConsent.rerender();
+            })
+        }
+
+
         document.addEventListener(VideoProviderConsent.#rerenderEventName, () => {
             this.connectedCallback();
         })
@@ -221,11 +236,12 @@ class VideoProviderConsent extends HTMLElement {
         this.style.display = 'none';
     }
 
-    get userCentricsServiceInformation() {
-        return UC_UI.getServicesBaseInfo().filter(service => service.name.includes(VideoProviderConsent.parseVideoProvider(this.src))).shift();
+    async getUserCentricsServiceInformation() {
+        const baseInfo = await __ucCmp.getServicesBaseInfo();
+        return baseInfo.filter(service => service.name.includes(VideoProviderConsent.parseVideoProvider(this.src))).shift()
     }
 
-    confirmConsent(event) {
+    async confirmConsent(event) {
         event.stopPropagation();
         if (event.target.tagName.toLowerCase() === 'a') {
             return;
@@ -233,14 +249,16 @@ class VideoProviderConsent extends HTMLElement {
 
         event.preventDefault();
 
-        UC_UI.acceptService(this.userCentricsServiceInformation?.id).then(() => {
-            if (this.autoplayOnConfirm) {
-                this.#justConfirmed = true;
-            }
+        const serviceInformation = await this.getUserCentricsServiceInformation();
+        await __ucCmp.updateServicesConsents([{id: serviceInformation?.id, consent: true}]);
+        await __ucCmp.saveConsents();
 
-            VideoProviderConsent.#userCentricsConsentInformation[this.videoProvider] = true;
-            VideoProviderConsent.rerender();
-        });
+        if (this.autoplayOnConfirm) {
+            this.#justConfirmed = true;
+        }
+
+        VideoProviderConsent.#userCentricsConsentInformation[this.videoProvider] = true;
+        VideoProviderConsent.rerender();
     }
 
     get cssElementSelector() {
