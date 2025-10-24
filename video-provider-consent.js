@@ -30,7 +30,6 @@ class VideoProviderConsent extends HTMLElement {
 
         if (typeof __ucCmp !== 'undefined') {
             __ucCmp.getServicesBaseInfo().then(serviceInformation => {
-                console.log(serviceInformation);
                 for (let key in VideoProviderConsent.#userCentricsConsentInformation) {
                     for (let index in serviceInformation) {
                         if (key === serviceInformation[index]['name']) {
