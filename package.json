@@ -1,6 +1,6 @@
 {
   "name": "nlxvideoconsent",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "A javascript custom element to handle third party video provider consent",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
